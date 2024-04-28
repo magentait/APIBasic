@@ -5,6 +5,25 @@ import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
+fun transformWeatherResponse(response: WeatherResponse): SimpleWeatherResponse {
+    return SimpleWeatherResponse(
+        city = response.name,
+        temperature = response.main.temp - 273.15, // Преобразование из Кельвинов в Цельсии
+        description = response.weather.joinToString(", ") { it.description },
+        humidity = response.main.humidity,
+        windSpeed = response.wind.speed,
+        pressure = response.main.pressure
+    )
+}
+
+data class SimpleWeatherResponse(
+    val city: String,
+    val temperature: Double, // Температура в Цельсиях
+    val description: String, // Описание погоды
+    val humidity: Int, // Влажность в процентах
+    val windSpeed: Double, // Скорость ветра в м/с
+    val pressure: Int // Давление в hPa
+)
 
 data class WeatherResponse(
     val coord: Coordinates,

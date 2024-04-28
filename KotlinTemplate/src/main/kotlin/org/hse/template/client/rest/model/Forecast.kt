@@ -1,10 +1,28 @@
 package org.hse.template.client.rest.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import io.swagger.v3.oas.annotations.media.Schema
-import org.springframework.format.annotation.DateTimeFormat
-import java.time.LocalDateTime
-import org.hse.template.client.rest.model.WeatherResponse
+
+fun transformForecastResponse(forecastDetails: List<ForecastDetail>): List<SimpleForecastResponse> {
+    return forecastDetails.map { detail ->
+        SimpleForecastResponse(
+            date = detail.dateTimeText,
+            description = detail.weather.joinToString(", ") { it.description },
+            temperature = detail.temperatureDetails.temp - 273.15,
+            minTemp = detail.temperatureDetails.temp_min,
+            maxTemp = detail.temperatureDetails.temp_max,
+            pop = detail.pop
+        )
+    }
+}
+
+data class SimpleForecastResponse(
+    val date: String, // Human-readable date
+    val description: String, // Weather condition
+    val temperature: Double, // Current temperature
+    val minTemp: Double, // Minimum temperature
+    val maxTemp: Double, // Maximum temperature
+    val pop: Double // Probability of precipitation
+)
 
 data class ForecastResponse(
     val cod: String,
